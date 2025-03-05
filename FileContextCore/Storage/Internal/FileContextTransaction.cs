@@ -19,11 +19,13 @@ namespace FileContextCore.Storage.Internal
     
         public virtual void Commit()
         {
+            Console.WriteLine("commit");
         }
 
     
         public virtual void Rollback()
         {
+            Console.WriteLine("roolback");
         }
 
     
