@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using FileContextCore.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace FileContextCore.FileManager
 {
@@ -14,7 +15,7 @@ namespace FileContextCore.FileManager
         private string _filetype;
 		private string _databasename;
         private string _location;
-
+        private List<Guid> lista = new List<Guid>();
         public DefaultFileManager() { }
         
         public void Initialize(IFileContextScopedOptions options, IEntityType entityType, string fileType)
@@ -52,7 +53,8 @@ namespace FileContextCore.FileManager
                 return "";
             }
         }
-
+        //TODO: AQui necesitamos agregar un metodo para guardar los ID en la lista para saber que vamos a borrar
+        //Pero debemos evitar guardar cosas innecesarias
         public void SaveContent(string content)
         {
             lock (_thisLock)

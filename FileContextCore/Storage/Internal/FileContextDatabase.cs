@@ -64,7 +64,7 @@ namespace FileContextCore.Storage.Internal
         public override int SaveChanges(IList<IUpdateEntry> entries)
             => _store.ExecuteTransaction(Check.NotNull(entries, nameof(entries)), _updateLogger);
 
-    
+    //TODO: Aquí es donde se mandan a guardar los datos
         public override Task<int> SaveChangesAsync(
             IList<IUpdateEntry> entries,
             CancellationToken cancellationToken = default)

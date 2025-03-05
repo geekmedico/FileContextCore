@@ -179,6 +179,8 @@ namespace FileContextCore.Storage.Internal
             return rowsAffected;
         }
 
+        //TODO: CAda que hay una entrada nueva aqui pasan a verificar que la tabla esta creada
+
         // Must be called from inside the lock
         private IFileContextTable EnsureTable(object key, IEntityType entityType)
         {

@@ -37,7 +37,7 @@ namespace FileContextCore.StoreManager
             string content = _fileManager.LoadContent();
             return _serializer.Deserialize(content, newList);
         }
-
+        //TODO: Aqui necesitamos pasar el ID al File manager para tener la lista de lo que se va a borrar
         public void Serialize<TKey>(Dictionary<TKey, object[]> list)
         {
             string cnt = _serializer.Serialize(list);

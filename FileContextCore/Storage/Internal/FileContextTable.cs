@@ -91,7 +91,7 @@ namespace FileContextCore.Storage.Internal
         private static ValueComparer GetStructuralComparer(IProperty p)
             => p.GetStructuralValueComparer() ?? p.FindTypeMapping()?.StructuralComparer;
 
-    
+    //TODO: AQui se crean los entry
         public virtual void Create(IUpdateEntry entry)
         {
             var row = entry.EntityType.GetProperties()
@@ -209,7 +209,7 @@ namespace FileContextCore.Storage.Internal
 
         private static object SnapshotValue(ValueComparer comparer, object value)
             => comparer == null ? value : comparer.Snapshot(value);
-
+        //TODO aqui se manda a guardar
         public void Save()
         {
             _storeManager.Serialize(ConvertToProvider(_rows));
