@@ -245,11 +245,19 @@ namespace FileContextCore.Storage.Internal
 
         private Dictionary<TKey, object[]> Init()
         {
-            _storeManager = (IStoreManager)_serviceProvider.GetService(_options.StoreManagerType);
-            _storeManager.Initialize(_options, _entityType, _keyValueFactory);
+            try
+            {
+                _storeManager = (IStoreManager)_serviceProvider.GetService(_options.StoreManagerType);
+                _storeManager.Initialize(_options, _entityType, _keyValueFactory);
 
-            Dictionary<TKey, object[]> newList = new Dictionary<TKey, object[]>(_keyValueFactory.EqualityComparer);
-            return ConvertFromProvider(_storeManager.Deserialize(newList));
+                Dictionary<TKey, object[]> newList = new Dictionary<TKey, object[]>(_keyValueFactory.EqualityComparer);
+                return ConvertFromProvider(_storeManager.Deserialize(newList));
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
         }
 
         private Dictionary<TKey, object[]> ApplyValueConverter(Dictionary<TKey, object[]> list, Func<ValueConverter, Func<object, object>> conversionFunc)

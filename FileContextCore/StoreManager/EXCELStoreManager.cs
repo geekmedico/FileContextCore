@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using FileContextCore.Infrastructure.Internal;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Metadata;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
 
 namespace FileContextCore.StoreManager
 {
@@ -41,6 +43,7 @@ namespace FileContextCore.StoreManager
         public void Initialize(IFileContextScopedOptions options, IEntityType entityType, object keyValueFactory)
         {
             _options = options;
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             _entityType = entityType;
             _propertyKeys = entityType.GetProperties().Select(p => p.GetColumnName()).ToArray();
             _propertyColumnIndices = new int[_propertyKeys.Length];
@@ -77,6 +80,9 @@ namespace FileContextCore.StoreManager
                 for (int i = 0; i < _propertyKeys.Length; i++)
                 {
                     _worksheet.Cells[1, i + 1].Value = _propertyKeys[i];
+                    //Aqui establecemos el estilo de la celda
+                    _worksheet.Cells[1, i + 1].Style.Fill.SetBackground(OfficeOpenXml.Drawing.eThemeSchemeColor.Accent1, ExcelFillStyle.Solid);
+                    _worksheet.Cells[1, i + 1].AddComment(_propertyKeys[i] + "no modificar esta celda");
                     _propertyColumnIndices[i] = i + 1;
                     _worksheet.Column(i + 1).AutoFit();
                 }
@@ -96,6 +102,7 @@ namespace FileContextCore.StoreManager
             {
                 for (int i = 0; i < _propertyKeys.Length; i++)
                 {
+                    int dimensiones = _worksheet.Dimension.Columns;
                     for (int x = 0; x < _worksheet.Dimension.Columns; x++)
                     {
                         string val = _worksheet.Cells[1, x + 1].GetValue<string>();
@@ -117,9 +124,23 @@ namespace FileContextCore.StoreManager
 
                 for (int x = 0; x < _propertyKeys.Length; x++)
                 {
-                    object val = _worksheet.Cells[y, _propertyColumnIndices[x]].GetValue<string>()
+                    if (_propertyColumnIndices[x] == 0)
+                    {
+                        Console.WriteLine("La llave " + x + " no se encuentra y correponde a " + _propertyKeys[x]);
+                        int ultimaColumna = _worksheet.Dimension.Columns;
+                        _worksheet.Cells[1, ultimaColumna + 1].Style.Fill.SetBackground(OfficeOpenXml.Drawing.eThemeSchemeColor.Accent1, ExcelFillStyle.Solid);
+                        _worksheet.Cells[1, ultimaColumna + 1].AddComment(_propertyKeys[x] + "no modificar esta celda");
+                        _worksheet.Cells[1, ultimaColumna + 1].Value = _propertyKeys[x];
+                        _worksheet.Column(ultimaColumna + 1).AutoFit();
+                        _propertyColumnIndices[x] = ultimaColumna + 1;
+                        _package.Save();
+                    }
+
+                        object val = _worksheet.Cells[y, _propertyColumnIndices[x]].GetValue<string>()
                         .Deserialize(_typeList[x]);
-                    value.Add(val);
+                        value.Add(val);
+                    
+                    
                 }
 
                 TKey key = SerializerHelper.GetKey<TKey>(_keyValueFactory, _entityType, propertyName =>
@@ -149,6 +170,7 @@ namespace FileContextCore.StoreManager
             }
             else
             {
+                Console.WriteLine("Guardando archivo de excel");
                 _package.Save();
             }
         }
@@ -161,6 +183,7 @@ namespace FileContextCore.StoreManager
             {
                 for (int x = 0; x < _propertyKeys.Length; x++)
                 {
+                    //Console.WriteLine("A la propieda" + _propertyKeys[x] + "Le corresponderia la columna " + _propertyColumnIndices[x]);
                     _worksheet.SetValue(y, x + 1, val.Value[x].Serialize());
                 }
 
