@@ -47,7 +47,7 @@ namespace FileContextCore.FileManager
 
                 if (File.Exists(path))
                 {
-                    Console.WriteLine("Lectura del archivo" + path);
+                    //Console.WriteLine("Lectura del archivo" + path);
                     return File.ReadAllText(path);
                 }
 
@@ -61,7 +61,7 @@ namespace FileContextCore.FileManager
             lock (_thisLock)
             {
                 string path = GetFileName();
-                Console.WriteLine("Escritura del archivo" + path);
+                //Console.WriteLine("Escritura del archivo" + path);
                 File.WriteAllText(path, content);
             }
         }
