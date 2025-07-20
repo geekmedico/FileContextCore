@@ -18,7 +18,7 @@ namespace FileContextCore.Extensions
             }
 
 
-            return Task.Run(() => source.ToList(), cancellationToken);
+            return source.ToList();
 
         }
     }
