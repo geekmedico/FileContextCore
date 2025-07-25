@@ -60,21 +60,37 @@ namespace FileContextCore.Serializer
         {
             if (input != null)
             {
+                string result = "";
                 if (input.GetType().IsArray)
                 {
-                    string result = "";
-
-                    object[] arr = (object[]) input;
-
-                    for (int i = 0; i < arr.Length; i++)
+                    
+                    if(input is object[] arr)
                     {
-                        result += arr[i].Serialize();
-
-                        if (i + 1 < arr.Length)
+                        for (int i = 0; i < arr.Length; i++)
                         {
-                            result += ",";
+                            result += arr[i].Serialize();
+
+                            if (i + 1 < arr.Length)
+                            {
+                                result += ",";
+                            }
                         }
                     }
+                    if(input is byte[] barr)
+                    {
+                        for (int i = 0; i < barr.Length; i++)
+                        {
+                            result += barr[i].Serialize();
+
+                            if (i + 1 < barr.Length)
+                            {
+                                result += ",";
+                            }
+                        }
+                    }
+                    //object[] arr = (object[]) input;
+
+                    
 
                     return result;
                 }
